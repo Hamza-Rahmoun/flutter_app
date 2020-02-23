@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_offline/flutter_offline.dart';
 
 void main() => runApp(MyApp());
 
@@ -13,41 +14,39 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
         title: 'Flutter Recipe App',
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primaryColor: Colors.orange[500],
-        ),
         home: HomePage());
   }
 }
 
-class HomePage extends StatefulWidget {
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
+class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _drawerKey,
-      drawer: Drawer(
-        child: ListView(
-          children: <Widget>[
-            DrawerHeader(
-              child: Text('hello'),
-            ),
-          ],
+    return SafeArea(
+      child: Scaffold(
+        body: Builder(
+          builder: (BuildContext context) {
+            return OfflineBuilder(
+              connectivityBuilder: (BuildContext context,
+                  ConnectivityResult connectivity, Widget child) {
+                final bool connected = connectivity != ConnectivityResult.none;
+                return connected
+                    ? Container(
+                        width: 250,
+                        height: 250,
+                        color: Colors.red,
+                      )
+                    : Container(
+                        width: 250,
+                        height: 250,
+                        color: Colors.blue,
+                      );
+              },
+              child: Center(
+                child: Text(''),
+              ),
+            );
+          },
         ),
-      ),
-      body: Center(
-        child: IconButton(
-            icon: Icon(Icons.access_time),
-            onPressed: () {
-              setState(() {
-                _drawerKey.currentState.openDrawer();
-              });
-            }),
       ),
     );
   }
