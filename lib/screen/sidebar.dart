@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_app/widget/customacliper.dart';
+import 'package:flutter_app/providerwidget/homepagewidget.dart';
+import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 
 class SideBar extends StatefulWidget {
@@ -50,6 +51,7 @@ class _SideBarState extends State<SideBar>
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+    final text = Provider.of<HomePageProvider>(context);
     return StreamBuilder<bool>(
       initialData: false,
       stream: isSidebarOpenedStream,
@@ -62,89 +64,15 @@ class _SideBarState extends State<SideBar>
           right: isSideBarOpenedAsync.data ? 0 : screenWidth - 45,
           child: Row(
             children: <Widget>[
-              buildDrawer(),
-              buildAlignContainer(),
+              text.buildDrawer(),
+              text.buildAlignContainer(
+                pressed: () => onIconPressed(),
+                progress: _animationController.view,
+              ),
             ],
           ),
         );
       },
-    );
-  }
-
-  Widget buildDrawer() {
-    return Builder(
-      builder: (context) {
-        return Expanded(
-          child: Container(
-            color: const Color(0xFF262AAA),
-            child: Column(
-              children: <Widget>[
-                SizedBox(
-                  height: 100,
-                ),
-                ListTile(
-                  title: Text(
-                    "Prateek",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 30,
-                        fontWeight: FontWeight.w800),
-                  ),
-                  subtitle: Text(
-                    "www.techieblossom.com",
-                    style: TextStyle(
-                      color: Color(0xFF1BB5FD),
-                      fontSize: 18,
-                    ),
-                  ),
-                  leading: CircleAvatar(
-                    child: Icon(
-                      Icons.perm_identity,
-                      color: Colors.white,
-                    ),
-                    radius: 40,
-                  ),
-                ),
-                Divider(
-                  height: 64,
-                  thickness: 0.5,
-                  color: Colors.white.withOpacity(0.3),
-                  indent: 32,
-                  endIndent: 32,
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget buildAlignContainer() {
-    return Align(
-      alignment: Alignment(0, -0.9),
-      child: GestureDetector(
-        onTap: () => onIconPressed(),
-        child: ClipPath(
-          clipper: CustomMenuClipper(),
-          child: Container(
-            height: 110,
-            width: 35,
-            decoration: BoxDecoration(
-                color: const Color(0xFF262AAA),
-                border: Border.all(
-                  width: 0,
-                )),
-            alignment: Alignment.centerLeft,
-            child: AnimatedIcon(
-              icon: AnimatedIcons.menu_close,
-              progress: _animationController.view,
-              color: Color(0xFF1BB5FD),
-              size: 25,
-            ),
-          ),
-        ),
-      ),
     );
   }
 }
